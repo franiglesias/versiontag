@@ -20,6 +20,10 @@ Bash command to automate tag semantic versioning in a git repository.
 * Make it executable if needed.
 * There is no step three, I guess.
 
+## Known limitations
+
+You should update your master before running `versiontag` in order to get the latests tags from the remote repo. 
+
 ## Basic usage
 
 ```
