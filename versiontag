@@ -52,7 +52,12 @@ function showSuccess() {
 }
 
 
-lasttag=`git describe --tags --long`
+lasttag=`git describe --tags --long` || true
+
+if [[ -z "$lasttag" ]]; then
+	lasttag='v0.0.0'
+fi
+
 cleantag=${lasttag%%-*}
 
 parts=(${cleantag//./ })
@@ -60,6 +65,10 @@ parts=(${cleantag//./ })
 major=${parts[0]:1}
 minor=${parts[1]}
 patch=${parts[2]}
+
+major=${major:0}
+minor=${minor:0}
+patch=${patch:0}
 
 last="v$major.$minor.$patch"
 
@@ -91,7 +100,7 @@ do
 			exit 1;;
 	esac
 	
-	if [[ -z $2 ]]
+	if [[ -z "$2" ]]
 	then
 		echo "No message provided. You must provide a message";
 		exit 1;
