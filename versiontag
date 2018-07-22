@@ -1,0 +1,127 @@
+#!/bin/bash
+
+function execute {
+    cmd=("$@")
+	echo
+    echo "Executing ${cmd[*]} ..."
+	echo
+    # execute the command:
+    "${cmd[@]}"
+}
+
+function confirm() {
+    read -p "$1 ([y]es or [N]o): "
+    case $(echo $REPLY | tr '[A-Z]' '[a-z]') in
+        y|yes) echo "yes" ;;
+        *)     echo "no" ;;
+    esac
+}
+
+function showHelp() {
+	echo
+	echo "versiontag"
+	echo "=========="
+	echo
+	echo "Automates version tag creation."
+	echo 
+	echo "Commands: patch|minor|major|current 'Tag message'";
+	echo
+	echo "Examples:"
+	echo "---------"
+	echo 
+	echo "Show current version: ./versiontag current"
+	echo "Patch version:        ./versiontag patch 'Fix broken view'"
+	echo "Minor version:        ./versiontag minor 'Add Customer filter by email'"
+	echo "Major version:        ./versiontag major 'Blog module'"
+	echo
+	exit 0
+}
+
+function showSuccess() {
+	echo
+	echo "Tag v$major.$minor.$patch was created in local repository."
+	echo
+	echo "Push it:"
+	echo
+	echo "    git push origin v$major.$minor.$patch"
+	echo
+	echo "Delete tag:"
+	echo
+	echo "    git tag -d v$major.$minor.$patch"
+	echo
+}
+
+
+lasttag=`git describe --tags --long`
+cleantag=${lasttag%%-*}
+
+parts=(${cleantag//./ })
+
+major=${parts[0]:1}
+minor=${parts[1]}
+patch=${parts[2]}
+
+last="v$major.$minor.$patch"
+
+mode=''
+
+while [ -n "$1" ]
+do
+	case "$1" 
+	in
+
+		patch) 
+			patch=$((patch + 1)) 
+			mode='patch';;
+		minor) 
+			minor=$((minor + 1))
+			patch=0 
+			mode='minor';;
+		major) 
+			major=$((major + 1)); minor=0
+			patch=0 
+			mode='major';;
+		current)
+			echo "Current version: $last"
+			exit 0;;
+		help)
+			showHelp;;
+		*)
+			echo "$1 option is not valid"
+			exit 1;;
+	esac
+	
+	if [[ -z $2 ]]
+	then
+		echo "No message provided. You must provide a message";
+		exit 1;
+	fi
+	
+	msg=$2;
+	
+	shift 2;
+done
+
+if [[ -z "$mode" ]]
+then
+	showHelp;
+	exit 0;
+fi	 
+
+echo "Current version : $last"
+echo "New tag         : v$major.$minor.$patch"
+
+if [[ "yes" == $(confirm "Do you agree?") ]]
+then
+	execute git tag -a "v$major.$minor.$patch" -m "$msg ($mode version)"
+	
+	showSuccess;
+	
+	if [[ "yes" == $(confirm "Do you want to push this tag right now?") ]]
+	then
+		execute git push origin "v$major.$minor.$patch"
+	fi
+	
+fi
+
+exit 0
