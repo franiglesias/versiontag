@@ -163,9 +163,10 @@ if [[ false == "$msg" ]]; then
 fi
 
 if [[ -z "$mode" ]]; then
+    echo "No mode selected"
 	showHelp;
-	exit 0;
-fi	 
+	exit 0
+fi
 
 echo "Current version : $last"
 echo "New tag         : v$major.$minor.$patch"
