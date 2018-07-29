@@ -33,7 +33,9 @@ function showHelp() {
 	echo
 	echo "Automates version tag creation."
 	echo 
-	echo "Commands: patch|minor|major|current 'Tag message'";
+	echo "Commands: patch|minor|major|current 'Tag message'"
+	echo "          remove"
+	echo "          current"
 	echo
 	echo "Examples:"
 	echo "---------"
@@ -42,6 +44,7 @@ function showHelp() {
 	echo "Patch version:        ./versiontag patch 'Fix broken view'"
 	echo "Minor version:        ./versiontag minor 'Add Customer filter by email'"
 	echo "Major version:        ./versiontag major 'Blog module'"
+	echo "Remove last version:  ./versiontag remove"
 	echo
 	exit 0
 }
@@ -112,6 +115,12 @@ do
 			mode='major';;
 		current)
 			echo "Current version: $last"
+			exit 0;;
+		remove)
+			if [[ "yes" == $(confirm "Do you want to remove $last?") ]]; then
+				execute git tag -d "$last"
+				execute git push origin ":$last"
+			fi
 			exit 0;;
 		help)
 			showHelp;;
