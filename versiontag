@@ -74,7 +74,8 @@ function updateSemverFile() {
 	echo ":notes: $msg" >&3
 	exec 3>&-
 	
-	execute git commit -a .semver -m "Update .semver file"
+	execute git add .semver
+	execute git commit -m "Update .semver file"
 	execute git push
 }
 
