@@ -8,7 +8,7 @@ function execute {
     echo "Executing ${cmd[*]} ..."
 	echo
     # execute the command:
-    "${cmd[@]}"
+    "${cmd[@]}" 2>&1
 }
 
 function confirm() {
