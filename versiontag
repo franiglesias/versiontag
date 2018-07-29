@@ -63,6 +63,18 @@ function showSuccess() {
 	echo
 }
 
+function updateSemverFile() {
+	exec 3<> .semver
+
+	echo "---" >&3
+	echo ":major: $major" >&3
+	echo ":minor: $minor" >&3
+	echo ":patch: $patch" >&3
+	echo >&3
+	echo ":notes: $msg" >&3
+	exec 3>&-
+}
+
 
 lasttag=`git describe --tags --long` || true
 
@@ -120,6 +132,7 @@ do
 			if [[ "yes" == $(confirm "Do you want to remove $last?") ]]; then
 				execute git tag -d "$last"
 				execute git push origin ":$last"
+				updateSemverFile
 			fi
 			exit 0;;
 		help)
@@ -151,6 +164,7 @@ echo "Message         : $msg"
 if [[ "$force" = true ]]; then
 	execute git tag -a "v$major.$minor.$patch" -m "$msg ($mode version)"
 	execute git push origin "v$major.$minor.$patch"
+	updateSemverFile
 	echo 
 	echo "Version tag created and pushed"
 	exit 0;
@@ -169,5 +183,7 @@ showSuccess;
 if [[ "yes" == $(confirm "Do you want to push this tag right now?") ]]; then
 	execute git push origin "v$major.$minor.$patch"
 fi
+
+updateSemverFile
 
 exit 0
