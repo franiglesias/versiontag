@@ -4,21 +4,15 @@ Bash command to automate tag semantic versioning in a git repository.
 
 ## Commands
 
-**help**: Shows a help
-
-**current**: Shows the last version tag found. If there is none it defaults to v0.0.0.
-
-**`patch`**: Increases patch version: v1.0.0 -> v1.0.1
-
-**`minor`**: Increases minor version (and resets patch): v1.0.5 -> v1.1.0
-
-**`major`**: Increases major version (and resets minor and patch): v1.3.4 -> v2.0.0
-
-**`remove`**: Removes the last tag in the repository. This command doesn't support the `-f|--force` option.
+`help` - Shows a help
+`current` - Shows the last version tag found. If there is none it defaults to `v0.0.0`  
+`patch` - Increases patch version: `v1.0.0 -> v1.0.1`  
+`minor` - Increases minor version (and resets patch): `v1.0.5 -> v1.1.0`  
+`major` - Increases major version (and resets minor and patch): `v1.3.4 -> v2.0.0`  
+`remove` - Removes the last tag in the repository. This command doesn't support the `-f|--force` option.
 
 ## Options
-
-**`-f|--force`**: Script won't ask for confirmation.
+`-f|--force` - Script won't ask for confirmation.
 
 ## Installation
 
@@ -26,6 +20,14 @@ Bash command to automate tag semantic versioning in a git repository.
 * Make it executable if needed.
 * There is no step three, I guess.
 
+If you want to install it on your linux machine, use:
+```bash
+sudo curl -L \
+https://raw.githubusercontent.com/franiglesias/versiontag/master/versiontag \
+-o /usr/local/bin/versiontag \
+&& sudo chmod +x /usr/local/bin/versiontag \
+&& versiontag help
+```
 ## Known limitations
 
 You should update your master before running `versiontag` in order to get the latests tags from the remote repo. 
