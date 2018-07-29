@@ -18,14 +18,12 @@ function confirm() {
 }
 
 function getMessage() {
-	echo "This is message: $2"
-	if [[ -z "$2" ]]
+	if [[ -z "$@" ]]
 	then
-		echo "No message provided. You must provide a message";
-		exit 1;
+		echo false;
 	fi
 	
-	echo $2
+	echo $@
 }
 
 function showHelp() {
@@ -97,19 +95,19 @@ do
 			exit 0;;
 		patch) 
 			patch=$((patch + 1)) 
-			msg=getMessage
+			msg=$(getMessage "$2")
 			shift 1
 			mode='patch';;
 		minor) 
 			minor=$((minor + 1))
 			patch=0 
-			msg=getMessage
+			msg=$(getMessage "$2")
 			shift 1
 			mode='minor';;
 		major) 
 			major=$((major + 1)); minor=0
 			patch=0 
-			msg=getMessage
+			msg=$(getMessage "$2")
 			shift 1
 			mode='major';;
 		current)
@@ -125,14 +123,21 @@ do
 	shift 1;
 done
 
-if [[ -z "$mode" ]]
-then
+if [[ false == "$msg" ]]; then
+	echo
+	echo "No message."
+	exit 1;
+fi
+
+if [[ -z "$mode" ]]; then
 	showHelp;
 	exit 0;
 fi	 
 
 echo "Current version : $last"
 echo "New tag         : v$major.$minor.$patch"
+echo
+echo "Message         : $msg"
 
 if [[ "$force" = true ]]; then
 	execute git tag -a "v$major.$minor.$patch" -m "$msg ($mode version)"
@@ -142,18 +147,18 @@ if [[ "$force" = true ]]; then
 	exit 0;
 fi
 
+if [[ "no" == $(confirm "Do you agree?") ]]; then
+	echo
+	echo "No tag was created"
+	exit 0;
+fi
 
-if [[ "yes" == $(confirm "Do you agree?") ]]
-then
-	execute git tag -a "v$major.$minor.$patch" -m "$msg ($mode version)"
+execute git tag -a "v$major.$minor.$patch" -m "$msg ($mode version)"
 	
-	showSuccess;
+showSuccess;
 	
-	if [[ "yes" == $(confirm "Do you want to push this tag right now?") ]]
-	then
-		execute git push origin "v$major.$minor.$patch"
-	fi
-	
+if [[ "yes" == $(confirm "Do you want to push this tag right now?") ]]; then
+	execute git push origin "v$major.$minor.$patch"
 fi
 
 exit 0
