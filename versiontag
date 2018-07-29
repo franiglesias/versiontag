@@ -83,7 +83,7 @@ function updateSemverFile() {
 }
 
 
-lasttag=`git describe --tags --long` || true
+lasttag=`git describe --tags --long 2> /dev/null` || true
 
 if [[ -z "$lasttag" ]]; then
 	lasttag='v0.0.0'
