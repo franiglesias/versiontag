@@ -32,6 +32,14 @@ https://raw.githubusercontent.com/franiglesias/versiontag/master/versiontag \
 
 You should update your master before running `versiontag` in order to get the latests tags from the remote repo. 
 
+## Contributors
+
+Feel free to suggest improvements and ideas. 
+
+A big thank you to:
+
+[Patrik Kristian](https://github.com/pkristian): Linux installation instructions
+
 ## Basic usage
 
 ```

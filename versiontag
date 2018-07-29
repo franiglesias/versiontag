@@ -73,6 +73,9 @@ function updateSemverFile() {
 	echo >&3
 	echo ":notes: $msg" >&3
 	exec 3>&-
+	
+	execute git commit -a .semver -m "Update .semver file"
+	execute git push
 }
 
 
@@ -132,7 +135,7 @@ do
 			if [[ "yes" == $(confirm "Do you want to remove $last?") ]]; then
 				execute git tag -d "$last"
 				execute git push origin ":$last"
-				updateSemverFile
+				updateSemverFilegi
 			fi
 			exit 0;;
 		help)
