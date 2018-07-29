@@ -34,6 +34,7 @@ https://raw.githubusercontent.com/franiglesias/versiontag/master/versiontag \
 && sudo chmod +x /usr/local/bin/versiontag \
 && versiontag help
 ```
+
 ## Known limitations
 
 You should update your master before running `versiontag` in order to get the latests tags from the remote repo. 
@@ -44,7 +45,11 @@ Feel free to suggest improvements and ideas.
 
 A big thank you to:
 
-[Patrik Kristian](https://github.com/pkristian): Linux installation instructions
+[Patrik Kristian](https://github.com/pkristian): 
+
+* Tests
+* Linux installation instructions
+* Several code improvements
 
 ## Basic usage
 
