@@ -2,6 +2,12 @@
 
 Bash command to automate tag semantic versioning in a git repository.
 
+## Features
+
+Allow easy maintenance of semantic version in git projects.
+
+Since 1.4.2 supports .semver file writing (suggested by [Javier Ferrer](https://github.com/JavierCane)).
+
 ## Commands
 
 `help` - Shows a help
