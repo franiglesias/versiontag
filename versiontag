@@ -29,25 +29,26 @@ function getMessage() {
 }
 
 function showHelp() {
-	echo
-	echo "versiontag"
-	echo "=========="
-	echo
-	echo "Automates version tag creation."
-	echo 
-	echo "Commands: patch|minor|major|current 'Tag message'"
-	echo "          remove"
-	echo "          current"
-	echo
-	echo "Examples:"
-	echo "---------"
-	echo 
-	echo "Show current version: ./versiontag current"
-	echo "Patch version:        ./versiontag patch 'Fix broken view'"
-	echo "Minor version:        ./versiontag minor 'Add Customer filter by email'"
-	echo "Major version:        ./versiontag major 'Blog module'"
-	echo "Remove last version:  ./versiontag remove"
-	echo
+cat <<'TXT'
+versiontag
+==========
+
+Automates version tag creation.
+
+Commands:   patch|minor|major|current 'Tag message'
+            remove
+            current
+
+Examples:
+---------
+
+Show current version: ./versiontag current
+Patch version:        ./versiontag patch 'Fix broken view'
+Minor version:        ./versiontag minor 'Add Customer filter by email'
+Major version:        ./versiontag major 'Blog module'
+Remove last version:  ./versiontag remove
+
+TXT
 	exit 0
 }
 
