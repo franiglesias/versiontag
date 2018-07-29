@@ -1,7 +1,6 @@
 ---
 :major: 1
 :minor: 4
-:patch: 1
+:patch: 2
 
-:notes: Fix semver autopush
-rt
+:notes: Document .semver support
