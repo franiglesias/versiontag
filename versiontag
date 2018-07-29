@@ -1,4 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+set -e
 
 function execute {
     cmd=("$@")
@@ -6,7 +8,7 @@ function execute {
     echo "Executing ${cmd[*]} ..."
 	echo
     # execute the command:
-    "${cmd[@]}"
+    "${cmd[@]}" 2>&1
 }
 
 function confirm() {
@@ -27,25 +29,26 @@ function getMessage() {
 }
 
 function showHelp() {
-	echo
-	echo "versiontag"
-	echo "=========="
-	echo
-	echo "Automates version tag creation."
-	echo 
-	echo "Commands: patch|minor|major|current 'Tag message'"
-	echo "          remove"
-	echo "          current"
-	echo
-	echo "Examples:"
-	echo "---------"
-	echo 
-	echo "Show current version: ./versiontag current"
-	echo "Patch version:        ./versiontag patch 'Fix broken view'"
-	echo "Minor version:        ./versiontag minor 'Add Customer filter by email'"
-	echo "Major version:        ./versiontag major 'Blog module'"
-	echo "Remove last version:  ./versiontag remove"
-	echo
+cat <<'TXT'
+versiontag
+==========
+
+Automates version tag creation.
+
+Commands:   patch|minor|major|current 'Tag message'
+            remove
+            current
+
+Examples:
+---------
+
+Show current version: ./versiontag current
+Patch version:        ./versiontag patch 'Fix broken view'
+Minor version:        ./versiontag minor 'Add Customer filter by email'
+Major version:        ./versiontag major 'Blog module'
+Remove last version:  ./versiontag remove
+
+TXT
 	exit 0
 }
 
@@ -80,7 +83,7 @@ function updateSemverFile() {
 }
 
 
-lasttag=`git describe --tags --long` || true
+lasttag=`git describe --tags --long 2> /dev/null` || true
 
 if [[ -z "$lasttag" ]]; then
 	lasttag='v0.0.0'
@@ -102,51 +105,55 @@ last="v$major.$minor.$patch"
 
 mode=''
 force=false
-
-while [ -n "$1" ]
-do
-	case "$1" 
-	in
-		-f|--force)
-			force=true;;
-		-h|--help)
+for ((i = 1; i <= $#; i++ )); do
+	case ${!i} in
+		"-f"|"--force")
+			force=true
+			;;
+		"-h"|"--help")
 			showHelp
-			exit 0;;
-		patch) 
-			patch=$((patch + 1)) 
-			msg=$(getMessage "$2")
-			shift 1
-			mode='patch';;
-		minor) 
+			;;
+		"patch")
+			patch=$((patch + 1))
+			let i++
+			msg=$(getMessage "${!i}")
+			mode='patch'
+			;;
+		"minor")
 			minor=$((minor + 1))
-			patch=0 
-			msg=$(getMessage "$2")
-			shift 1
-			mode='minor';;
-		major) 
-			major=$((major + 1)); minor=0
-			patch=0 
-			msg=$(getMessage "$2")
-			shift 1
-			mode='major';;
-		current)
+			patch=0
+			let i++
+			msg=$(getMessage "${!i}")
+			mode='minor'
+			;;
+		"major")
+			major=$((major + 1))
+			minor=0
+			patch=0
+			let i++
+			msg=$(getMessage "${!i}")
+			mode='major'
+			;;
+		"current")
 			echo "Current version: $last"
-			exit 0;;
-		remove)
+			exit 0
+			;;
+		"remove")
 			if [[ "yes" == $(confirm "Do you want to remove $last?") ]]; then
 				execute git tag -d "$last"
 				execute git push origin ":$last"
 				updateSemverFilegi
 			fi
-			exit 0;;
-		help)
-			showHelp;;
+			exit 0
+			;;
+		"help")
+			showHelp
+			;;
 		*)
-			echo "$1 option is not valid"
-			exit 1;;
+			echo "${!i} option is not valid"
+			exit 1
+			;;
 	esac
-	
-	shift 1;
 done
 
 if [[ false == "$msg" ]]; then
@@ -156,9 +163,10 @@ if [[ false == "$msg" ]]; then
 fi
 
 if [[ -z "$mode" ]]; then
+    echo "No mode selected"
 	showHelp;
-	exit 0;
-fi	 
+	exit 0
+fi
 
 echo "Current version : $last"
 echo "New tag         : v$major.$minor.$patch"
