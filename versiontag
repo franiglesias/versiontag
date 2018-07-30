@@ -4,11 +4,12 @@ set -e
 
 function execute {
     cmd=("$@")
-	echo
-    echo "Executing ${cmd[*]} ..."
-	echo
-    # execute the command:
-    "${cmd[@]}" 2>&1
+	if [[ false = "$dry" ]]; then
+		# execute the command:
+    	"${cmd[@]}" 2>&1
+	else
+		echo "DRY -no changes- ${cmd[*]} "
+	fi
 }
 
 function confirm() {
@@ -20,8 +21,7 @@ function confirm() {
 }
 
 function getMessage() {
-	if [[ -z "$@" ]]
-	then
+	if [[ -z "$@" ]]; then
 		echo false;
 	fi
 	
@@ -67,13 +67,18 @@ function showSuccess() {
 }
 
 function updateSemverFile() {
-	exec 3<> .semver
+	if [[ true == "$dry" ]]; then
+		exit 0;
+	fi
 
+	exec 3<> .semver
+	:> .semver
 	echo "---" >&3
 	echo ":major: $major" >&3
 	echo ":minor: $minor" >&3
 	echo ":patch: $patch" >&3
 	echo >&3
+	
 	echo ":notes: $msg" >&3
 	exec 3>&-
 	
@@ -82,33 +87,37 @@ function updateSemverFile() {
 	execute git push
 }
 
+function getLastTag() {
+	lasttag=`git describe --tags --abbrev=0 2> /dev/null` || true
 
-lasttag=`git describe --tags --long 2> /dev/null` || true
+	if [[ -z "$lasttag" ]]; then
+		lasttag='v0.0.0'
+	fi
 
-if [[ -z "$lasttag" ]]; then
-	lasttag='v0.0.0'
-fi
+	lasttag=${lasttag:1}
 
-cleantag=${lasttag%%-*}
+	parts=(${lasttag//./ })
 
-parts=(${cleantag//./ })
+	major=${parts[0]}
+	minor=${parts[1]}
+	patch=${parts[2]}
 
-major=${parts[0]:1}
-minor=${parts[1]}
-patch=${parts[2]}
+	last="v$major.$minor.$patch"
+}
 
-major=${major:0}
-minor=${minor:0}
-patch=${patch:0}
-
-last="v$major.$minor.$patch"
+getLastTag
 
 mode=''
+dry=false
 force=false
+
 for ((i = 1; i <= $#; i++ )); do
 	case ${!i} in
 		"-f"|"--force")
 			force=true
+			;;
+		"-d"|"--dry")
+			dry=true
 			;;
 		"-h"|"--help")
 			showHelp
@@ -168,10 +177,16 @@ if [[ -z "$mode" ]]; then
 	exit 0
 fi
 
+if [[ true == "$dry" ]]; then
+	echo ">>> Dry mode"
+	echo
+fi
+
 echo "Current version : $last"
 echo "New tag         : v$major.$minor.$patch"
 echo
 echo "Message         : $msg"
+echo
 
 if [[ "$force" = true ]]; then
 	execute git tag -a "v$major.$minor.$patch" -m "$msg ($mode version)"
