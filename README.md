@@ -19,9 +19,9 @@ Since 1.4.2 supports .semver file writing (suggested by [Javier Ferrer](https://
 
 ## Options
 
-`-h|--help` - Shows help.
-`-f|--force` - Script won't ask for confirmation.
-`-d|--dry`- Executes without perform any change.
+`-h|--help` - Shows help.  
+`-f|--force` - Script won't ask for confirmation.  
+`-d|--dry`- Executes without perform any change.  
 
 ## Installation
 
