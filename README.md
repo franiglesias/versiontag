@@ -38,7 +38,7 @@ https://raw.githubusercontent.com/franiglesias/versiontag/master/versiontag \
 && versiontag help
 ```
 
-## Known limitations
+## Known limitations
 
 You should update your master before running `versiontag` in order to get the latests tags from the remote repo. 
 
