@@ -3,15 +3,20 @@ versiontag
 
 Automates version tag creation.
 
-Commands:   patch|minor|major|current 'Tag message'
+Commands:   patch|minor|major 'Tag message'
             remove
             current
+
+Options:    -h|--help:   show this help
+            -f|--force:  don't ask for confirmation
+			-d|--dry:    don't change things
 
 Examples:
 ---------
 
-Show current version: ./versiontag current
-Patch version:        ./versiontag patch 'Fix broken view'
-Minor version:        ./versiontag minor 'Add Customer filter by email'
-Major version:        ./versiontag major 'Blog module'
-Remove last version:  ./versiontag remove
+Show current version:  versiontag current
+Patch version:         versiontag patch 'Fix broken view'
+Minor version:         versiontag minor 'Add Customer filter by email'
+Major version:         versiontag major 'Blog module'
+Remove last version:   versiontag remove
+Run whitout changes:   versiontag --dry remove

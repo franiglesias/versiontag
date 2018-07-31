@@ -4,7 +4,7 @@ set -e
 
 function execute {
     cmd=("$@")
-	if [[ false = "$dry" ]]; then
+	if [[ false == "$dry" ]]; then
 		# execute the command:
     	"${cmd[@]}" 2>&1
 	else
@@ -29,17 +29,21 @@ function getMessage() {
 }
 
 function updateSemverFile() {
-	exec 3<> .semver
+	if [[ true == "$dry" ]]; then
+		exit 0;
+	fi
 	
-	: >&3
+	:> .semver
+	exec 3<> .semver
+
 	echo "---" >&3
 	echo ":major: $major" >&3
 	echo ":minor: $minor" >&3
 	echo ":patch: $patch" >&3
 	echo >&3
+	
 	echo ":notes: $msg" >&3
 	echo >&3
-	
 	exec 3>&-
 	
 	execute git add .semver
@@ -60,21 +64,25 @@ versiontag
 
 Automates version tag creation.
 
-Commands:   patch|minor|major|current 'Tag message'
+Commands:   patch|minor|major 'Tag message'
             remove
             current
+
+Options:    -h|--help:   show this help
+            -f|--force:  don't ask for confirmation
+			-d|--dry:    don't change things
 
 Examples:
 ---------
 
-Show current version: ./versiontag current
-Patch version:        ./versiontag patch 'Fix broken view'
-Minor version:        ./versiontag minor 'Add Customer filter by email'
-Major version:        ./versiontag major 'Blog module'
-Remove last version:  ./versiontag remove
+Show current version:  versiontag current
+Patch version:         versiontag patch 'Fix broken view'
+Minor version:         versiontag minor 'Add Customer filter by email'
+Major version:         versiontag major 'Blog module'
+Remove last version:   versiontag remove
+Run whitout changes:   versiontag --dry remove
 
 TXT
-	exit 0
 }
 
 function showSuccess() {
@@ -89,23 +97,6 @@ function showSuccess() {
 	echo
 	echo "    git tag -d v$major.$minor.$patch"
 	echo
-}
-
-function updateSemverFile() {
-	if [[ true == "$dry" ]]; then
-		exit 0;
-	fi
-
-	exec 3<> .semver
-	:> .semver
-	echo "---" >&3
-	echo ":major: $major" >&3
-	echo ":minor: $minor" >&3
-	echo ":patch: $patch" >&3
-	echo >&3
-	
-	echo ":notes: $msg" >&3
-	exec 3>&-
 }
 
 function getLastTag() {
@@ -142,6 +133,7 @@ for ((i = 1; i <= $#; i++ )); do
 			;;
 		"-h"|"--help")
 			showHelp
+			exit 0
 			;;
 		"patch")
 			patch=$((patch + 1))
