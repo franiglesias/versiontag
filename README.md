@@ -4,7 +4,7 @@ Bash command to automate tag semantic versioning in a git repository.
 
 ## Features
 
-Allow easy maintenance of semantic version in git projects.
+Allow easy maintenance of semantic versioning in git projects.
 
 Since 1.4.2 supports .semver file writing (suggested by [Javier Ferrer](https://github.com/JavierCane)).
 
@@ -18,7 +18,10 @@ Since 1.4.2 supports .semver file writing (suggested by [Javier Ferrer](https://
 `remove` - Removes the last tag in the repository. This command doesn't support the `-f|--force` option.
 
 ## Options
+
+`-h|--help` - Shows help.
 `-f|--force` - Script won't ask for confirmation.
+`-d|--dry`- Executes without perform any change.
 
 ## Installation
 
@@ -54,7 +57,7 @@ A big thank you to:
 ## Basic usage
 
 ```
-./versiontag patch|minor|major 'Tag message'
+$ versiontag patch|minor|major 'Tag message'
 ```
 
 The command will show current and updated version and will prompt you to create the tag in the local version.
@@ -101,35 +104,35 @@ To https://github.com/franiglesias/versiontag
 Show current version
 
 ```bash
-./versiontag current
+$ versiontag current
 ```
 
 Patch version
 
 ```bash
-./versiontag patch 'Fix broken view'
+$ versiontag patch 'Fix broken view'
 ```
 
 Force patch version
 
 ```bash
-./versiontag patch 'Fix broken view' --force
+$ versiontag patch 'Fix broken view' --force
 ```
 
 Minor version
 
 ```bash
-./versiontag minor 'Add Customer filter by email'
+$ versiontag minor 'Add Customer filter by email'
 ```
 
 Major version
 
 ```bash
-./versiontag major 'Blog module'
+$ versiontag major 'Blog module'
 ```
 
 Remove last tag
 
 ```bash
-./versiontag remove
+$ versiontag remove
 ```
