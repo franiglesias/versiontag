@@ -12,11 +12,6 @@ do
 {
 	countTests=$((countTests + 1))
 
-	printf "\e[96m";
-	printf "### ";
-	printf "\e[0m";
-	printf "${testCase/%?}";
-
 	expected="$(cat $testCase/expected)"
 
 	actual="$(bash $testCase/command.sh)"
@@ -24,14 +19,18 @@ do
 	if [ "$expected" = "$actual" ]
 	then
 		printf "\e[32m"
-		printf '%s\n' " [ok]"
+		printf '%s' "[ok] "
+		printf '%s\n' "${testCase/%?}";
 		continue 1;
 	fi
 
 	countFailed=$((countFailed + 1))
 
 	printf "\e[31m"
-	printf '%s\n' " [error]"
+	printf "[error] "
+
+	printf "\e[0m";
+	printf '%s\n' "${testCase/%?}";
 
 	printf "\e[96m"
 	printf '%s\n' "--expected:"
@@ -48,17 +47,20 @@ do
 }
 done
 
+printf -- "\n"
+
 if [ $countFailed -eq 0 ]
 then
 {
-	printf '%s\n' "\e[32m"
-	printf "Passed all $countTests tests."
+	printf "\e[32m"
+	printf '%s\n' "Passed all $countTests tests."
 }
 else
 {
 	printf "\e[31m"
-	printf "Failed $countFailed from $countTests tests."
+	printf '%s\n' "Failed $countFailed from $countTests tests."
 }
 fi
 
 printf "\e[0m"
+printf -- "\n"
