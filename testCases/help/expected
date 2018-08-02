@@ -9,7 +9,7 @@ Commands:   patch|minor|major 'Tag message'
 
 Options:    -h|--help:   show this help
             -f|--force:  don't ask for confirmation
-			-d|--dry:    don't change things
+            -d|--dry:    don't change things
 
 Examples:
 ---------

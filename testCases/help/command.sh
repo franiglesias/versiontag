@@ -1,2 +1,1 @@
-bash ../versiontag \
-    help
+bash ../versiontag help
