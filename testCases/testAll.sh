@@ -10,55 +10,58 @@ countFailed=0
 for testCase in $(ls -d */)
 do
 {
-	countTests=$((countTests + 1))
+    countTests=$((countTests + 1))
 
-	echo -ne "\e[96m";
-	echo -ne "### ";
-	echo -ne "\e[0m";
-	echo -ne "${testCase::-1}";
+    expected="$(cat $testCase/expected)"
 
-	expected="$(cat $testCase/expected)"
+    actual="$(bash $testCase/command.sh)"
 
-	actual="$(bash $testCase/command.sh)"
+    if [ "$expected" = "$actual" ]
+    then
+        printf "\e[32m"
+        printf '%s' "[ok] "
+        printf "\e[0m";
+        printf '%s\n' "${testCase/%?}";
+        continue 1;
+    fi
 
-	if [ "$expected" == "$actual" ]
-	then
-		echo -ne "\e[32m"
-		echo -e " [ok]"
-		continue;
-	fi
+    countFailed=$((countFailed + 1))
 
-	countFailed=$((countFailed + 1))
+    printf "\e[31m"
+    printf "[error] "
 
-	echo -ne "\e[31m"
-	echo -e " [error]"
+    printf "\e[0m";
+    printf '%s\n' "${testCase/%?}";
 
-	echo -ne "\e[96m"
-	echo -e "--expected:"
+    printf "\e[96m"
+    printf '%s\n' "--expected:"
 
-	echo -ne "\e[92m"
-	echo "$expected"
+    printf "\e[92m"
+    echo "$expected"
 
-	echo -ne "\e[96m"
-	echo -e "--actual:"
+    printf "\e[96m"
+    printf '%s\n' "--actual:"
 
-	echo -ne "\e[35m"
-	echo "$actual"
-	echo -ne "\e[0m"
+    printf "\e[35m"
+    echo "$actual"
+    printf "\e[0m"
 }
 done
+
+printf -- "\n"
 
 if [ $countFailed -eq 0 ]
 then
 {
-	echo -e "\e[32m"
-	echo -ne "Passed all $countTests tests."
+    printf "\e[32m"
+    printf '%s\n' "Passed all $countTests tests."
 }
 else
 {
-	echo -e "\e[31m"
-	echo -ne "Failed $countFailed from $countTests tests."
+    printf "\e[31m"
+    printf '%s\n' "Failed $countFailed from $countTests tests."
 }
 fi
 
-echo -e "\e[0m"
+printf "\e[0m"
+printf -- "\n"

@@ -4,12 +4,14 @@ set -e
 
 function execute {
     cmd=("$@")
-	if [[ false == "$dry" ]]; then
-		# execute the command:
-    	"${cmd[@]}" 2>&1
-	else
-		echo "DRY -no changes- ${cmd[*]} "
-	fi
+    if [[ true == "$dry" ]];then
+        printf '%s \n' "DRY -no changes- ${cmd[*]}"
+        return
+    fi
+
+    printf '%s\n' "Executing ${cmd[*]} ..."
+
+    "${cmd[@]}" 2>&1
 }
 
 function confirm() {
@@ -21,40 +23,40 @@ function confirm() {
 }
 
 function getMessage() {
-	if [[ -z "$@" ]]; then
-		echo false;
-	fi
-	
-	echo $@
+    if [[ -z "$@" ]]; then
+        echo false;
+    fi
+    
+    echo $@
 }
 
 function updateSemverFile() {
-	if [[ true == "$dry" ]]; then
-		exit 0;
-	fi
-	
-	:> .semver
-	exec 3<> .semver
+    if [[ true == "$dry" || false == "$versionFile" ]]; then
+        return 0
+    fi
+    
+    :> .semver
+    exec 3<> .semver
 
-	echo "---" >&3
-	echo ":major: $major" >&3
-	echo ":minor: $minor" >&3
-	echo ":patch: $patch" >&3
-	echo >&3
-	
-	echo ":notes: $msg" >&3
-	echo >&3
-	exec 3>&-
-	
-	execute git add .semver
-	execute git commit -m "Update .semver file"
-	execute git push
+    echo "---" >&3
+    echo ":major: $major" >&3
+    echo ":minor: $minor" >&3
+    echo ":patch: $patch" >&3
+    echo >&3
+    
+    echo ":notes: $msg" >&3
+    echo >&3
+    exec 3>&-
+    
+    execute git add .semver
+    execute git commit -m "Update .semver file"
+    execute git push
 }
 
 function removeTag() {
-	execute git tag -d "$last"
-	execute git push origin ":$last"
-	updateSemverFile
+    execute git tag -d "$last"
+    execute git push origin ":$last"
+    updateSemverFile
 }
 
 function showHelp() {
@@ -68,9 +70,10 @@ Commands:   patch|minor|major 'Tag message'
             remove
             current
 
-Options:    -h|--help:   show this help
+Options:    -d|--dry:    don't change things
             -f|--force:  don't ask for confirmation
-			-d|--dry:    don't change things
+            -h|--help:   show this help
+            -s|--semver: generate .semver file
 
 Examples:
 ---------
@@ -86,35 +89,35 @@ TXT
 }
 
 function showSuccess() {
-	echo
-	echo "Tag v$major.$minor.$patch was created in local repository."
-	echo
-	echo "Push it:"
-	echo
-	echo "    git push origin v$major.$minor.$patch"
-	echo
-	echo "Delete tag:"
-	echo
-	echo "    git tag -d v$major.$minor.$patch"
-	echo
+    echo
+    echo "Tag v$major.$minor.$patch was created in local repository."
+    echo
+    echo "Push it:"
+    echo
+    echo "    git push origin v$major.$minor.$patch"
+    echo
+    echo "Delete tag:"
+    echo
+    echo "    git tag -d v$major.$minor.$patch"
+    echo
 }
 
 function getLastTag() {
-	lasttag=`git describe --tags --abbrev=0 2> /dev/null` || true
+    lasttag=`git describe --tags --abbrev=0 2> /dev/null` || true
 
-	if [[ -z "$lasttag" ]]; then
-		lasttag='v0.0.0'
-	fi
+    if [[ -z "$lasttag" ]]; then
+        lasttag='v0.0.0'
+    fi
 
-	lasttag=${lasttag:1}
+    lasttag=${lasttag:1}
 
-	parts=(${lasttag//./ })
+    parts=(${lasttag//./ })
 
-	major=${parts[0]}
-	minor=${parts[1]}
-	patch=${parts[2]}
+    major=${parts[0]}
+    minor=${parts[1]}
+    patch=${parts[2]}
 
-	last="v$major.$minor.$patch"
+    last="v$major.$minor.$patch"
 }
 
 getLastTag
@@ -122,76 +125,76 @@ getLastTag
 mode=''
 dry=false
 force=false
+versionFile=false
 
 for ((i = 1; i <= $#; i++ )); do
-	case ${!i} in
-		"-f"|"--force")
-			force=true
-			;;
-		"-d"|"--dry")
-			dry=true
-			;;
-		"-h"|"--help")
-			showHelp
-			exit 0
-			;;
-		"patch")
-			patch=$((patch + 1))
-			let i++
-			msg=$(getMessage "${!i}")
-			mode='patch'
-			;;
-		"minor")
-			minor=$((minor + 1))
-			patch=0
-			let i++
-			msg=$(getMessage "${!i}")
-			mode='minor'
-			;;
-		"major")
-			major=$((major + 1))
-			minor=0
-			patch=0
-			let i++
-			msg=$(getMessage "${!i}")
-			mode='major'
-			;;
-		"current")
-			echo "Current version: $last"
-			exit 0
-			;;
-		"remove")
-			if [[ "yes" == $(confirm "Do you want to remove $last?") ]]; then
-				removeTag
-			fi
-			exit 0
-			;;
-		"help")
-			showHelp
-			;;
-		*)
-			echo "${!i} option is not valid"
-			exit 1
-			;;
-	esac
+    case ${!i} in
+        "-d"|"--dry")
+            dry=true
+            ;;
+        "-f"|"--force")
+            force=true
+            ;;
+        "-h"|"--help")
+            showHelp
+            exit 0
+            ;;
+        "-s"|"--semver")
+            versionFile=true
+            ;;
+        "patch")
+            patch=$((patch + 1))
+            let i++
+            msg=$(getMessage "${!i}")
+            mode='patch'
+            ;;
+        "minor")
+            minor=$((minor + 1))
+            patch=0
+            let i++
+            msg=$(getMessage "${!i}")
+            mode='minor'
+            ;;
+        "major")
+            major=$((major + 1))
+            minor=0
+            patch=0
+            let i++
+            msg=$(getMessage "${!i}")
+            mode='major'
+            ;;
+        "current")
+            echo "Current version: $last"
+            exit 0
+            ;;
+        "remove")
+            if [[ "yes" == $(confirm "Do you want to remove $last?") ]]; then
+                removeTag
+            fi
+            exit 0
+            ;;
+        "help")
+            showHelp
+            exit 0
+            ;;
+        *)
+            echo "${!i} option is not valid"
+            exit 1
+            ;;
+    esac
 done
 
 if [[ false == "$msg" ]]; then
-	echo
-	echo "No message."
-	exit 1;
+    echo
+    echo "No message."
+    exit 1;
 fi
 
 if [[ -z "$mode" ]]; then
     echo "No mode selected"
-	showHelp;
-	exit 0
+    exit 0
 fi
 
-if [[ true == "$dry" ]]; then
-	echo ">>> Dry mode"
-	echo
-fi
 
 echo "Current version : $last"
 echo "New tag         : v$major.$minor.$patch"
@@ -199,27 +202,25 @@ echo
 echo "Message         : $msg"
 echo
 
-if [[ "$force" = true ]]; then
-	execute git tag -a "v$major.$minor.$patch" -m "$msg ($mode version)"
-	execute git push origin "v$major.$minor.$patch"
-	updateSemverFile
-	echo 
-	echo "Version tag created and pushed"
-	exit 0;
+if [[ "$force" == true ]]; then
+    execute git tag -a "v$major.$minor.$patch" -m "$msg ($mode version)"
+    execute git push origin "v$major.$minor.$patch"
+    updateSemverFile
+    exit 0;
 fi
 
 if [[ "no" == $(confirm "Do you agree?") ]]; then
-	echo
-	echo "No tag was created"
-	exit 0;
+    echo
+    echo "No tag was created"
+    exit 0;
 fi
 
 execute git tag -a "v$major.$minor.$patch" -m "$msg ($mode version)"
-	
+    
 showSuccess;
-	
+    
 if [[ "yes" == $(confirm "Do you want to push this tag right now?") ]]; then
-	execute git push origin "v$major.$minor.$patch"
+    execute git push origin "v$major.$minor.$patch"
 fi
 
 updateSemverFile

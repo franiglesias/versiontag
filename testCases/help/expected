@@ -7,9 +7,10 @@ Commands:   patch|minor|major 'Tag message'
             remove
             current
 
-Options:    -h|--help:   show this help
+Options:    -d|--dry:    don't change things
             -f|--force:  don't ask for confirmation
-			-d|--dry:    don't change things
+            -h|--help:   show this help
+            -s|--semver: generate .semver file
 
 Examples:
 ---------
