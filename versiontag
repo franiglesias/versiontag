@@ -2,6 +2,15 @@
 
 set -e
 
+# Initializes flags and other variables
+
+mode=''             # the mode of the version major|minor|patch
+dry=false           # Flag to run with executing commands
+force=false         # Flag to run without asking for confirmation
+versionFile=false   # Flag to generate the .semver file
+last=''             # Will contain the last version tag found
+
+## Runs a command with argument, honoring the dry flag
 function execute {
     cmd=("$@")
     if [[ true == "$dry" ]];then
@@ -13,6 +22,8 @@ function execute {
 
     "${cmd[@]}" 2>&1
 }
+
+# Asks for confirmation returns yes|no
 
 function confirm() {
     read -p "$1 ([y]es or [N]o): "
@@ -29,6 +40,8 @@ function getMessage() {
     
     echo $@
 }
+
+# Generates the .semver file
 
 function updateSemverFile() {
     if [[ true == "$dry" || false == "$versionFile" ]]; then
@@ -53,11 +66,15 @@ function updateSemverFile() {
     execute git push
 }
 
+# Removes last tag both local and remote
+
 function removeTag() {
     execute git tag -d "$last"
-    execute git push origin ":$last"
+    execute git push origin :"$last"
     updateSemverFile
 }
+
+# Shows full help for the script
 
 function showHelp() {
 cat <<'TXT'
@@ -83,10 +100,12 @@ Patch version:         versiontag patch 'Fix broken view'
 Minor version:         versiontag minor 'Add Customer filter by email'
 Major version:         versiontag major 'Blog module'
 Remove last version:   versiontag remove
-Run whitout changes:   versiontag --dry remove
+Run without changes:   versiontag --dry remove
 
 TXT
 }
+
+# Shows the result of the command
 
 function showSuccess() {
     echo
@@ -101,6 +120,8 @@ function showSuccess() {
     echo "    git tag -d v$major.$minor.$patch"
     echo
 }
+
+# Get the last tag and breaks into parts
 
 function getLastTag() {
     lasttag=`git describe --tags --abbrev=0 2> /dev/null` || true
@@ -122,10 +143,7 @@ function getLastTag() {
 
 getLastTag
 
-mode=''
-dry=false
-force=false
-versionFile=false
+# Process command options
 
 for ((i = 1; i <= $#; i++ )); do
     case ${!i} in
@@ -195,6 +213,7 @@ if [[ -z "$mode" ]]; then
     exit 0
 fi
 
+# Shows information
 
 echo "Current version : $last"
 echo "New tag         : v$major.$minor.$patch"

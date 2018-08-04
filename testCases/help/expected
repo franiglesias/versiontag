@@ -20,4 +20,4 @@ Patch version:         versiontag patch 'Fix broken view'
 Minor version:         versiontag minor 'Add Customer filter by email'
 Major version:         versiontag major 'Blog module'
 Remove last version:   versiontag remove
-Run whitout changes:   versiontag --dry remove
+Run without changes:   versiontag --dry remove
