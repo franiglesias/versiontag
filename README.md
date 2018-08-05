@@ -2,27 +2,29 @@
 
 Bash command to automate tag semantic versioning in a git repository.
 
+Current version: v1.6.2
+
 ## Features
 
 Allow easy maintenance of semantic versioning in git projects.
 
-Since 1.4.2 supports .semver file writing (suggested by [Javier Ferrer](https://github.com/JavierCane)).
+Since 1.4.2 supports .semver file writing.
 
 ## Commands
 
-`help` - Shows a help
-`current` - Shows the last version tag found. If there is none it defaults to `v0.0.0`  
+`help` - Shows a help  
+`current` - Shows the last version tag found. If there is none it defaults to `v0.0.0`    
 `patch` - Increases patch version: `v1.0.0 -> v1.0.1`  
 `minor` - Increases minor version (and resets patch): `v1.0.5 -> v1.1.0`  
 `major` - Increases major version (and resets minor and patch): `v1.3.4 -> v2.0.0`  
-`remove` - Removes the last tag in the repository. This command doesn't support the `-f|--force` option.
+`remove` - Removes the last tag in the repository. This command doesn't support the `-f|--force` option.  
 
 ## Options
 
 `-h|--help` - Shows help.  
 `-f|--force` - Script won't ask for confirmation.  
-`-d|--dry` - Executes without perform any change.
-`-s|--semver` - Generates the .semver file
+`-d|--dry` - Executes without perform any change.  
+`-s|--semver` - Generates the .semver file.  
 
 ## Installation
 
@@ -30,13 +32,23 @@ Since 1.4.2 supports .semver file writing (suggested by [Javier Ferrer](https://
 * Make it executable if needed.
 * There is no step three, I guess.
 
-If you want to install it on your linux machine, use:
+If you want to install it on your Linux or Mac OS X machine, use:
 ```bash
 sudo curl -L \
 https://raw.githubusercontent.com/franiglesias/versiontag/master/versiontag \
 -o /usr/local/bin/versiontag \
 && sudo chmod +x /usr/local/bin/versiontag \
 && versiontag help
+```
+
+## Tests
+
+Tests should help you to understand how versiontag works and to modify the code without breaking functionality. More tests are coming soon.
+
+Run the tests with the following command. 
+
+```bash
+bash testCases/testAll.sh
 ```
 
 ## Known limitations
@@ -54,6 +66,12 @@ A big thank you to:
 * Tests
 * Linux installation instructions
 * Several code improvements
+
+ [Javier Ferrer](https://github.com/JavierCane)
+ 
+ * Suggested .semver file
+ 
+Your name here ;-)
 
 ## Basic usage
 
