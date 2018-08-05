@@ -165,20 +165,10 @@ for ((i = 1; i <= $#; i++ )); do
         "-s"|"--semver")
             versionFile=true
             ;;
-        "patch")
+        "patch"|"minor"|"major")
+            action="${!i}"
             let i++
             msg=$(getMessage "${!i}")
-            action='patch'
-            ;;
-        "minor")
-            let i++
-            msg=$(getMessage "${!i}")
-            action='minor'
-            ;;
-        "major")
-            let i++
-            msg=$(getMessage "${!i}")
-            action='major'
             ;;
         "current")
             action='current'
