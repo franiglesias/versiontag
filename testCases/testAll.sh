@@ -62,17 +62,12 @@ printf "\e[0m";
 
     printf '%s\n' "${testCase/%?}";
 
-    printf "\e[96m"
-    printf '%s\n' "--expected:"
-    printf "\e[92m"
-    echo "$expected"
-
-    printf "\e[96m"
-    printf '%s\n' "--actual:"
-
-    printf "\e[35m"
-    echo "$actual"
-    printf "\e[0m"
+    diff \
+        --old-line-format=$'\e[33m- %L\e[0m' \
+        --new-line-format=$'\e[31m+ %L\e[0m' \
+        --unchanged-line-format=$'\e[37m  %L\e[0m' \
+        <(echo "$expected") \
+        <(echo "$actual")
 }
 done
 
