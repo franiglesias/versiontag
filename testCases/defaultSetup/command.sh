@@ -1,1 +1,3 @@
+cd ../testRepo
+
 bash ../versiontag

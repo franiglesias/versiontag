@@ -15,19 +15,40 @@ runCallBack "./setUp.sh"
 countTests=0
 countFailed=0
 
+printf "\e[90m"
+printf '%s\n' "SRC  Result  Test"
+printf '%s\n' "============================="
+printf "\e[0m";
+
 for testCase in $(ls -d */)
 do
 {
     countTests=$((countTests + 1))
 
+printf "\e[90m"
+printf '%s' "."
+printf "\e[0m";
+
+    runCallBack "$testCase/setUp.sh"
+
     expected="$(cat $testCase/expected)"
 
+printf "\e[90m"
+printf '%s' "."
+printf "\e[0m";
+
     actual="$(bash $testCase/command.sh)"
+
+printf "\e[90m"
+printf '%s' ".  "
+printf "\e[0m";
+
+    runCallBack "$testCase/tearDown.sh"
 
     if [ "$expected" == "$actual" ]
     then
         printf "\e[32m"
-        printf '%s' "[ok] "
+        printf '%s' "[ok]    "
         printf "\e[0m";
         printf '%s\n' "${testCase/%?}";
         continue 1;
@@ -36,14 +57,13 @@ do
     countFailed=$((countFailed + 1))
 
     printf "\e[31m"
-    printf "[error] "
-
+    printf "[fail] "
     printf "\e[0m";
+
     printf '%s\n' "${testCase/%?}";
 
     printf "\e[96m"
     printf '%s\n' "--expected:"
-
     printf "\e[92m"
     echo "$expected"
 
@@ -55,6 +75,10 @@ do
     printf "\e[0m"
 }
 done
+
+printf "\e[90m"
+printf '%s\n' "============================="
+printf "\e[0m";
 
 runCallBack "./tearDown.sh"
 
