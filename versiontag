@@ -24,7 +24,6 @@ function execute {
 }
 
 # Asks for confirmation returns yes|no
-
 function confirm() {
     read -p "$1 ([y]es or [N]o): "
     case $(echo $REPLY | tr '[A-Z]' '[a-z]') in
@@ -238,6 +237,8 @@ fi
 
 execute git tag -a "v$major.$minor.$patch" -m "$msg ($action version)"
 
+updateSemverFile
+
 if [[ false == "$force" &&  "no" == $(confirm "Do you want to push this tag right now?") ]]; then
     echo
     echo "No tag was pushed"
@@ -245,7 +246,5 @@ if [[ false == "$force" &&  "no" == $(confirm "Do you want to push this tag righ
 fi
 
 execute git push origin "v$major.$minor.$patch"
-
-updateSemverFile
 
 exit 0
