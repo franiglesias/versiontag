@@ -11,6 +11,5 @@ git checkout -B test > /dev/null 2>&1
 git tag v1.1.1 > /dev/null 2>&1
 
 bash ../versiontag \
-    --force \
-    minor 'tag message' \
-    | grep -v "\[test" #ignore line with commit message
+    current
+

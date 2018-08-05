@@ -10,7 +10,7 @@ force=false         # Flag to run without asking for confirmation
 versionFile=false   # Flag to generate the .semver file
 last=''             # Will contain the last version tag found
 
-## Runs a command with argument, honoring the dry flag
+## Runs a command with arguments, honoring the dry flag
 function execute {
     cmd=("$@")
     if [[ true == "$dry" ]];then
@@ -121,6 +121,12 @@ function showSuccess() {
     echo
 }
 
+# Show current version
+
+function showCurrentVersion() {
+    printf 'Current version: %s\n' "$last"
+}
+
 # Get the last tag and breaks into parts
 
 function getLastTag() {
@@ -182,8 +188,7 @@ for ((i = 1; i <= $#; i++ )); do
             mode='major'
             ;;
         "current")
-            echo "Current version: $last"
-            exit 0
+            mode='current'
             ;;
         "remove")
             if [[ "yes" == $(confirm "Do you want to remove $last?") ]]; then
@@ -213,6 +218,10 @@ if [[ -z "$mode" ]]; then
     exit 0
 fi
 
+if [[ 'current' == "$mode" ]]; then
+    showCurrentVersion
+    exit 0
+fi
 # Shows information
 
 echo "Current version : $last"

@@ -4,6 +4,10 @@ set -e
 
 cd "$(dirname "$0")"
 
+if [ -e "./setUp.sh" ];then
+    bash "./setUp.sh"
+fi
+
 countTests=0
 countFailed=0
 
@@ -16,7 +20,7 @@ do
 
     actual="$(bash $testCase/command.sh)"
 
-    if [ "$expected" = "$actual" ]
+    if [ "$expected" == "$actual" ]
     then
         printf "\e[32m"
         printf '%s' "[ok] "
@@ -47,6 +51,10 @@ do
     printf "\e[0m"
 }
 done
+
+if [ -e "./tearDown.sh" ];then
+    bash "./tearDown.sh"
+fi
 
 printf -- "\n"
 
