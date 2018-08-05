@@ -4,13 +4,13 @@ set -e
 
 # Initializes flags and other variables
 
-mode=''             # the mode of the version major|minor|patch
+action=''           # the sub-command to execute
 dry=false           # Flag to run with executing commands
 force=false         # Flag to run without asking for confirmation
 versionFile=false   # Flag to generate the .semver file
 last=''             # Will contain the last version tag found
 
-## Runs a command with arguments, honoring the dry flag
+## Runs a command with arguments, taking care of the --dry flag
 function execute {
     cmd=("$@")
     if [[ true == "$dry" ]];then
@@ -168,20 +168,20 @@ for ((i = 1; i <= $#; i++ )); do
         "patch")
             let i++
             msg=$(getMessage "${!i}")
-            mode='patch'
+            action='patch'
             ;;
         "minor")
             let i++
             msg=$(getMessage "${!i}")
-            mode='minor'
+            action='minor'
             ;;
         "major")
             let i++
             msg=$(getMessage "${!i}")
-            mode='major'
+            action='major'
             ;;
         "current")
-            mode='current'
+            action='current'
             ;;
         "remove")
             if [[ "yes" == $(confirm "Do you want to remove $last?") ]]; then
@@ -210,7 +210,7 @@ fi
 
 getLastTag
 
-case $mode in
+case "$action" in
     'current')
         showCurrentVersion
         exit 0;;
@@ -239,26 +239,22 @@ echo
 echo "Message         : $msg"
 echo
 
-if [[ "$force" == true ]]; then
-    execute git tag -a "v$major.$minor.$patch" -m "$msg ($mode version)"
-    execute git push origin "v$major.$minor.$patch"
-    updateSemverFile
-    exit 0;
-fi
 
-if [[ "no" == $(confirm "Do you agree?") ]]; then
+if [[ false == "$force" &&  "no" == $(confirm "Do you agree?") ]]; then
     echo
     echo "No tag was created"
     exit 0;
 fi
 
-execute git tag -a "v$major.$minor.$patch" -m "$msg ($mode version)"
-    
-showSuccess;
-    
-if [[ "yes" == $(confirm "Do you want to push this tag right now?") ]]; then
-    execute git push origin "v$major.$minor.$patch"
+execute git tag -a "v$major.$minor.$patch" -m "$msg ($action version)"
+
+if [[ false == "$force" &&  "no" == $(confirm "Do you want to push this tag right now?") ]]; then
+    echo
+    echo "No tag was pushed"
+    exit 0;
 fi
+
+execute git push origin "v$major.$minor.$patch"
 
 updateSemverFile
 
