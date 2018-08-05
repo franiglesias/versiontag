@@ -2,6 +2,15 @@
 
 set -e
 
+# Initializes flags and other variables
+
+action=''           # the sub-command to execute
+dry=false           # Flag to run with executing commands
+force=false         # Flag to run without asking for confirmation
+versionFile=false   # Flag to generate the .semver file
+last=''             # Will contain the last version tag found
+
+## Runs a command with arguments, taking care of the --dry flag
 function execute {
     cmd=("$@")
     if [[ true == "$dry" ]];then
@@ -14,6 +23,7 @@ function execute {
     "${cmd[@]}" 2>&1
 }
 
+# Asks for confirmation returns yes|no
 function confirm() {
     read -p "$1 ([y]es or [N]o): "
     case $(echo $REPLY | tr '[A-Z]' '[a-z]') in
@@ -29,6 +39,8 @@ function getMessage() {
     
     echo $@
 }
+
+# Generates the .semver file
 
 function updateSemverFile() {
     if [[ true == "$dry" || false == "$versionFile" ]]; then
@@ -53,11 +65,15 @@ function updateSemverFile() {
     execute git push
 }
 
+# Removes last tag both local and remote
+
 function removeTag() {
     execute git tag -d "$last"
-    execute git push origin ":$last"
+    execute git push origin :"$last"
     updateSemverFile
 }
+
+# Shows full help for the script
 
 function showHelp() {
 cat <<'TXT'
@@ -83,10 +99,12 @@ Patch version:         versiontag patch 'Fix broken view'
 Minor version:         versiontag minor 'Add Customer filter by email'
 Major version:         versiontag major 'Blog module'
 Remove last version:   versiontag remove
-Run whitout changes:   versiontag --dry remove
+Run without changes:   versiontag --dry remove
 
 TXT
 }
+
+# Shows the result of the command
 
 function showSuccess() {
     echo
@@ -102,8 +120,16 @@ function showSuccess() {
     echo
 }
 
+# Show current version
+
+function showCurrentVersion() {
+    printf 'Current version: %s\n' "$last"
+}
+
+# Get the last tag and breaks into parts
+
 function getLastTag() {
-    lasttag=`git describe --tags --abbrev=0 2> /dev/null` || true
+    lasttag=`git tag | sort -r | grep "^v[0-9]*\.[0-9]*\.[0-9]" | head -1 2> /dev/null` || true
 
     if [[ -z "$lasttag" ]]; then
         lasttag='v0.0.0'
@@ -120,12 +146,8 @@ function getLastTag() {
     last="v$major.$minor.$patch"
 }
 
-getLastTag
 
-mode=''
-dry=false
-force=false
-versionFile=false
+# Process command options
 
 for ((i = 1; i <= $#; i++ )); do
     case ${!i} in
@@ -142,30 +164,13 @@ for ((i = 1; i <= $#; i++ )); do
         "-s"|"--semver")
             versionFile=true
             ;;
-        "patch")
-            patch=$((patch + 1))
+        "patch"|"minor"|"major")
+            action="${!i}"
             let i++
             msg=$(getMessage "${!i}")
-            mode='patch'
-            ;;
-        "minor")
-            minor=$((minor + 1))
-            patch=0
-            let i++
-            msg=$(getMessage "${!i}")
-            mode='minor'
-            ;;
-        "major")
-            major=$((major + 1))
-            minor=0
-            patch=0
-            let i++
-            msg=$(getMessage "${!i}")
-            mode='major'
             ;;
         "current")
-            echo "Current version: $last"
-            exit 0
+            action='current'
             ;;
         "remove")
             if [[ "yes" == $(confirm "Do you want to remove $last?") ]]; then
@@ -190,11 +195,32 @@ if [[ false == "$msg" ]]; then
     exit 1;
 fi
 
-if [[ -z "$mode" ]]; then
-    echo "No mode selected"
-    exit 0
-fi
+# Get last tag from repo and process the desired command
 
+getLastTag
+
+case "$action" in
+    'current')
+        showCurrentVersion
+        exit 0;;
+    'patch')
+        patch=$((patch + 1))
+        ;;
+    'minor')
+        minor=$((minor + 1))
+        patch=0
+        ;;
+    'major')
+        major=$((major + 1))
+        minor=0
+        patch=0
+        ;;
+    *)
+        echo "No mode selected"
+        exit 0
+esac
+
+# Shows information
 
 echo "Current version : $last"
 echo "New tag         : v$major.$minor.$patch"
@@ -202,27 +228,23 @@ echo
 echo "Message         : $msg"
 echo
 
-if [[ "$force" == true ]]; then
-    execute git tag -a "v$major.$minor.$patch" -m "$msg ($mode version)"
-    execute git push origin "v$major.$minor.$patch"
-    updateSemverFile
-    exit 0;
-fi
 
-if [[ "no" == $(confirm "Do you agree?") ]]; then
+if [[ false == "$force" &&  "no" == $(confirm "Do you agree?") ]]; then
     echo
     echo "No tag was created"
     exit 0;
 fi
 
-execute git tag -a "v$major.$minor.$patch" -m "$msg ($mode version)"
-    
-showSuccess;
-    
-if [[ "yes" == $(confirm "Do you want to push this tag right now?") ]]; then
-    execute git push origin "v$major.$minor.$patch"
-fi
+execute git tag -a "v$major.$minor.$patch" -m "$msg ($action version)"
 
 updateSemverFile
+
+if [[ false == "$force" &&  "no" == $(confirm "Do you want to push this tag right now?") ]]; then
+    echo
+    echo "No tag was pushed"
+    exit 0;
+fi
+
+execute git push origin "v$major.$minor.$patch"
 
 exit 0

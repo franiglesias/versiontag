@@ -4,6 +4,14 @@ set -e
 
 cd "$(dirname "$0")"
 
+function runCallBack() {
+    if [ -f "$1" ]; then
+        bash "$1"
+    fi
+}
+
+runCallBack "./setUp.sh"
+
 countTests=0
 countFailed=0
 
@@ -16,7 +24,7 @@ do
 
     actual="$(bash $testCase/command.sh)"
 
-    if [ "$expected" = "$actual" ]
+    if [ "$expected" == "$actual" ]
     then
         printf "\e[32m"
         printf '%s' "[ok] "
@@ -47,6 +55,8 @@ do
     printf "\e[0m"
 }
 done
+
+runCallBack "./tearDown.sh"
 
 printf -- "\n"
 
