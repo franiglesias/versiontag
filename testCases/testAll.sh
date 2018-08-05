@@ -4,9 +4,13 @@ set -e
 
 cd "$(dirname "$0")"
 
-if [ -e "./setUp.sh" ];then
-    bash "./setUp.sh"
-fi
+function runCallBack() {
+    if [ -f "$1" ]; then
+        bash "$1"
+    fi
+}
+
+runCallBack "./setUp.sh"
 
 countTests=0
 countFailed=0
@@ -52,9 +56,7 @@ do
 }
 done
 
-if [ -e "./tearDown.sh" ];then
-    bash "./tearDown.sh"
-fi
+runCallBack "./tearDown.sh"
 
 printf -- "\n"
 
