@@ -45,7 +45,7 @@ do
     if [ "$expected" == "$actual" ]
     then
         printf "\e[32m"
-        printf '%-4s' "√"
+        printf '%-3s' "*"
         printf "\e[0m";
         printf '%s\n' "${testCase/%?}";
         continue 1;
@@ -54,10 +54,9 @@ do
     countFailed=$((countFailed + 1))
 
     printf "\e[31m"
-    printf '%-4s' "x"
-    printf "\e[0m";
-
+    printf '%-3s' "!"
     printf '%s\n' "${testCase/%?}";
+    printf "\e[0m";
 
     diff \
         --old-line-format=$'\e[33m- %L\e[0m' \
