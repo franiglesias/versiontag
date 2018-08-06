@@ -12,6 +12,8 @@ function runCallBack() {
 
 printf "\e[90m"
 printf '%s\n' ">>> Preparing scenario..."
+printf '%s\n' "SRC  Test"
+printf '%s\n' "============================="
 printf "\e[0m";
 
 runCallBack "./globalSetup.sh"
@@ -19,40 +21,31 @@ runCallBack "./globalSetup.sh"
 countTests=0
 countFailed=0
 
-printf "\e[90m"
-printf '%s\n' "SRC  Result  Test"
-printf '%s\n' "============================="
-printf "\e[0m";
-
 for testCase in $(ls -d */)
 do
 {
     countTests=$((countTests + 1))
 
-printf "\e[90m"
-printf '%s' "."
-printf "\e[0m";
+    printf "\e[90m"
 
     runCallBack "./setUp.sh"
 
+    printf "."
+
     expected="$(cat $testCase/expected)"
 
-printf "\e[90m"
-printf '%s' "."
-printf "\e[0m";
+    printf "."
 
     actual="$(bash $testCase/command.sh)"
 
-printf "\e[90m"
-printf '%s' ".  "
-printf "\e[0m";
+    printf ".  "
 
     runCallBack "./tearDown.sh"
 
     if [ "$expected" == "$actual" ]
     then
         printf "\e[32m"
-        printf '%s' "[ok]    "
+        printf '%-4s' "√"
         printf "\e[0m";
         printf '%s\n' "${testCase/%?}";
         continue 1;
@@ -61,7 +54,7 @@ printf "\e[0m";
     countFailed=$((countFailed + 1))
 
     printf "\e[31m"
-    printf "[fail] "
+    printf '%-4s' "x"
     printf "\e[0m";
 
     printf '%s\n' "${testCase/%?}";
@@ -77,9 +70,6 @@ done
 
 printf "\e[90m"
 printf '%s\n' "============================="
-printf "\e[0m";
-
-printf "\e[90m"
 printf '%s\n' ">>> Cleaning scenario..."
 printf "\e[0m";
 
