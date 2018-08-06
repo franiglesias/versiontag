@@ -48,6 +48,7 @@ do
         printf '%-3s' "*"
         printf "\e[0m";
         printf '%s\n' "${testCase/%?}";
+
         continue 1;
     fi
 
@@ -71,10 +72,10 @@ printf "\e[90m"
 printf '%s\n' "============================="
 printf '%s\n' ">>> Cleaning scenario..."
 printf "\e[0m";
+printf -- "\n"
 
 runCallBack "./globalTearDown.sh"
 
-printf -- "\n"
 
 if [ $countFailed -eq 0 ]
 then
