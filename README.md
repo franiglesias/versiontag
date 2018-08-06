@@ -2,13 +2,15 @@
 
 Bash command to automate tag semantic versioning in a git repository.
 
-Current version: v1.6.2
+Current version: v2.0.0
 
 ## Features
 
 Allow easy maintenance of semantic versioning in git projects.
 
 Since 1.4.2 supports .semver file writing.
+
+Since 2.0.0 tags are not annotated by default. You must use the option `-m` or `--message` to annotate the tag.
 
 ## Commands
 
@@ -24,6 +26,7 @@ Since 1.4.2 supports .semver file writing.
 `-h|--help` - Shows help.  
 `-f|--force` - Script won't ask for confirmation.  
 `-d|--dry` - Executes without perform any change.  
+`-m|--message` - Annotates the tag with the message.  
 `-s|--semver` - Generates the .semver file.  
 
 ## Installation
@@ -85,39 +88,6 @@ After that, it will prompt you to push the tag to remote repository.
 
 That's all.
 
-This is an example of the full interaction to tag the first version of version tag (sort of auto-referencing)
-
-```bash
-➜  versiontag git:(master) ./versiontag major "First usable version"
-fatal: No names found, cannot describe anything.
-Current version : v0.0.0
-New tag         : v1.0.0
-Do you agree? ([y]es or [N]o): y
-
-Executing git tag -a v1.0.0 -m First usable version (major version) ...
-
-
-Tag v1.0.0 was created in local repository.
-
-Push it:
-
-    git push origin v1.0.0
-
-Delete tag:
-
-    git tag -d v1.0.0
-
-Do you want to push this tag right now? ([y]es or [N]o): y
-
-Executing git push origin v1.0.0 ...
-
-Counting objects: 1, done.
-Writing objects: 100% (1/1), 179 bytes | 179.00 KiB/s, done.
-Total 1 (delta 0), reused 0 (delta 0)
-To https://github.com/franiglesias/versiontag
- * [new tag]         v1.0.0 -> v1.0.0
-```
-
 ## Examples
 
 Show current version
@@ -129,25 +99,24 @@ $ versiontag current
 Patch version
 
 ```bash
-$ versiontag patch 'Fix broken view'
+$ versiontag patch -m 'Fix broken view'
 ```
 
-Force patch version
+Force patch version without annotation
 
 ```bash
-$ versiontag patch 'Fix broken view' --force
+$ versiontag --force patch
 ```
-
-Minor version
+Minor version with message option
 
 ```bash
-$ versiontag minor 'Add Customer filter by email'
+$ versiontag minor --message 'Add Customer filter by email'
 ```
 
 Major version
 
 ```bash
-$ versiontag major 'Blog module'
+$ versiontag major -m 'Blog module'
 ```
 
 Remove last tag
