@@ -86,18 +86,19 @@ Commands:   patch|minor|major 'Tag message'
             remove
             current
 
-Options:    -d|--dry:    don't change things
-            -f|--force:  don't ask for confirmation
-            -h|--help:   show this help
-            -s|--semver: generate .semver file
+Options:    -d|--dry:     don't change things
+            -f|--force:   don't ask for confirmation
+            -h|--help:    show this help
+            -m|--message: annotate tag with a message
+            -s|--semver:  generate .semver file
 
 Examples:
 ---------
 
 Show current version:  versiontag current
 Patch version:         versiontag patch 'Fix broken view'
-Minor version:         versiontag minor 'Add Customer filter by email'
-Major version:         versiontag major 'Blog module'
+Minor version:         versiontag minor --message'Add Customer filter by email'
+Major version:         versiontag major -m 'Blog module'
 Remove last version:   versiontag remove
 Run without changes:   versiontag --dry remove
 
