@@ -10,7 +10,13 @@ function runCallBack() {
     fi
 }
 
-runCallBack "./setUp.sh"
+printf "\e[90m"
+printf '%s\n' ">>> Preparing scenario..."
+printf '%s\n' "SRC  Test"
+printf '%s\n' "============================="
+printf "\e[0m";
+
+runCallBack "./globalSetup.sh"
 
 countTests=0
 countFailed=0
@@ -20,45 +26,56 @@ do
 {
     countTests=$((countTests + 1))
 
+    printf "\e[90m"
+
+    runCallBack "./setUp.sh"
+
+    printf "."
+
     expected="$(cat $testCase/expected)"
 
+    printf "."
+
     actual="$(bash $testCase/command.sh)"
+
+    printf ".  "
+
+    runCallBack "./tearDown.sh"
 
     if [ "$expected" == "$actual" ]
     then
         printf "\e[32m"
-        printf '%s' "[ok] "
+        printf '%-3s' "*"
         printf "\e[0m";
         printf '%s\n' "${testCase/%?}";
+
         continue 1;
     fi
 
     countFailed=$((countFailed + 1))
 
     printf "\e[31m"
-    printf "[error] "
-
-    printf "\e[0m";
+    printf '%-3s' "!"
     printf '%s\n' "${testCase/%?}";
+    printf "\e[0m";
 
-    printf "\e[96m"
-    printf '%s\n' "--expected:"
-
-    printf "\e[92m"
-    echo "$expected"
-
-    printf "\e[96m"
-    printf '%s\n' "--actual:"
-
-    printf "\e[35m"
-    echo "$actual"
-    printf "\e[0m"
+    diff \
+        --old-line-format=$'\e[33m- %L\e[0m' \
+        --new-line-format=$'\e[31m+ %L\e[0m' \
+        --unchanged-line-format=$'\e[37m  %L\e[0m' \
+        <(echo "$expected") \
+        <(echo "$actual")
 }
 done
 
-runCallBack "./tearDown.sh"
-
+printf "\e[90m"
+printf '%s\n' "============================="
+printf '%s\n' ">>> Cleaning scenario..."
+printf "\e[0m";
 printf -- "\n"
+
+runCallBack "./globalTearDown.sh"
+
 
 if [ $countFailed -eq 0 ]
 then
