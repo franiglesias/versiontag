@@ -10,7 +10,11 @@ function runCallBack() {
     fi
 }
 
-runCallBack "./setUp.sh"
+printf "\e[90m"
+printf '%s\n' ">>> Preparing scenario..."
+printf "\e[0m";
+
+runCallBack "./globalSetup.sh"
 
 countTests=0
 countFailed=0
@@ -29,7 +33,7 @@ printf "\e[90m"
 printf '%s' "."
 printf "\e[0m";
 
-    runCallBack "$testCase/setUp.sh"
+    runCallBack "./setUp.sh"
 
     expected="$(cat $testCase/expected)"
 
@@ -43,7 +47,7 @@ printf "\e[90m"
 printf '%s' ".  "
 printf "\e[0m";
 
-    runCallBack "$testCase/tearDown.sh"
+    runCallBack "./tearDown.sh"
 
     if [ "$expected" == "$actual" ]
     then
@@ -75,7 +79,11 @@ printf "\e[90m"
 printf '%s\n' "============================="
 printf "\e[0m";
 
-runCallBack "./tearDown.sh"
+printf "\e[90m"
+printf '%s\n' ">>> Cleaning scenario..."
+printf "\e[0m";
+
+runCallBack "./globalTearDown.sh"
 
 printf -- "\n"
 
