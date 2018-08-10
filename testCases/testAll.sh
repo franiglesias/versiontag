@@ -42,8 +42,6 @@ do
 
     runCallBack "./tearDown.sh"
 
-    testName=$(echo $testCase | sed -e 's/\([A-Z]\)/ \1/g')
-
     if [ "$expected" == "$actual" ]
     then
         printf "\e[32m"
@@ -58,7 +56,7 @@ do
 
     printf "\e[31m"
     printf '%-3s' "!"
-    printf '%s\n' "${testName/%?}";
+    printf '%s\n' "${testCase/%?}";
     printf "\e[0m";
 
     diff \
