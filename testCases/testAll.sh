@@ -49,7 +49,7 @@ do
         printf "\e[32m"
         printf '%-3s' "*"
         printf "\e[0m";
-        printf '%s\n' "${testName/%?}";
+        printf '%s\n' "${testCase/%?}";
 
         continue 1;
     fi
