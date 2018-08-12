@@ -32,14 +32,6 @@ function confirm() {
     esac
 }
 
-function getMessage() {
-    if [[ -z "$@" ]]; then
-        echo false;
-    fi
-    
-    echo $@
-}
-
 # Generates the .semver file
 
 function updateSemverFile() {
@@ -86,18 +78,19 @@ Commands:   patch|minor|major 'Tag message'
             remove
             current
 
-Options:    -d|--dry:    don't change things
-            -f|--force:  don't ask for confirmation
-            -h|--help:   show this help
-            -s|--semver: generate .semver file
+Options:    -d|--dry:     don't change things
+            -f|--force:   don't ask for confirmation
+            -h|--help:    show this help
+            -m|--message: annotate tag with a message
+            -s|--semver:  generate .semver file
 
 Examples:
 ---------
 
 Show current version:  versiontag current
 Patch version:         versiontag patch 'Fix broken view'
-Minor version:         versiontag minor 'Add Customer filter by email'
-Major version:         versiontag major 'Blog module'
+Minor version:         versiontag minor --message'Add Customer filter by email'
+Major version:         versiontag major -m 'Blog module'
 Remove last version:   versiontag remove
 Run without changes:   versiontag --dry remove
 
@@ -161,13 +154,15 @@ for ((i = 1; i <= $#; i++ )); do
             showHelp
             exit 0
             ;;
+        "-m"|"--message")
+            let i++
+            msg="${!i}"
+            ;;
         "-s"|"--semver")
             versionFile=true
             ;;
         "patch"|"minor"|"major")
             action="${!i}"
-            let i++
-            msg=$(getMessage "${!i}")
             ;;
         "current")
             action='current'
@@ -188,12 +183,6 @@ for ((i = 1; i <= $#; i++ )); do
             ;;
     esac
 done
-
-if [[ false == "$msg" ]]; then
-    echo
-    echo "No message."
-    exit 1;
-fi
 
 # Get last tag from repo and process the desired command
 
@@ -225,8 +214,7 @@ esac
 echo "Current version : $last"
 echo "New tag         : v$major.$minor.$patch"
 echo
-echo "Message         : $msg"
-echo
+
 
 
 if [[ false == "$force" &&  "no" == $(confirm "Do you agree?") ]]; then
@@ -235,7 +223,13 @@ if [[ false == "$force" &&  "no" == $(confirm "Do you agree?") ]]; then
     exit 0;
 fi
 
-execute git tag -a "v$major.$minor.$patch" -m "$msg ($action version)"
+if [[ -z $msg ]]; then
+    execute git tag "v$major.$minor.$patch"
+else
+    echo "Message         : $msg"
+    echo
+    execute git tag -a "v$major.$minor.$patch" -m "$msg ($action version)"
+fi
 
 updateSemverFile
 

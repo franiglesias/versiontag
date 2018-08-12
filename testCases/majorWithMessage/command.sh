@@ -3,7 +3,7 @@ git tag v1.1.1 > /dev/null 2>&1
 
 bash ../versiontag \
     --force \
-    major \
+    major -m 'tag message'\
     | grep -v "\[test" #ignore line with commit message
 
 git tag -d v1.1.1 > /dev/null 2>&1

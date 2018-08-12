@@ -1,0 +1,7 @@
+Current version : v1.1.1
+New tag         : v1.1.2
+
+Executing git tag v1.1.2 ...
+Executing git push origin v1.1.2 ...
+To ../testRemote/.git
+ * [new tag]         v1.1.2 -> v1.1.2
