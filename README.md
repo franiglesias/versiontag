@@ -1,6 +1,6 @@
 # versiontag
 
-Bash command to automate tag semantic versioning in a git repository.
+Bash command to automate tagging with semantic versioning in a git repository.
 
 Current version: v2.0.0
 
@@ -31,11 +31,12 @@ Since 2.0.0 tags are not annotated by default. You must use the option `-m` or `
 
 ## Installation
 
-* Copy the script to the place you want. Best in your $PATH.
+* Copy the script to the place you want. Best in your `$PATH`.
 * Make it executable if needed.
 * There is no step three, I guess.
 
 If you want to install it on your Linux or Mac OS X machine, use:
+
 ```bash
 sudo curl -L \
 https://raw.githubusercontent.com/franiglesias/versiontag/master/versiontag \
@@ -46,7 +47,7 @@ https://raw.githubusercontent.com/franiglesias/versiontag/master/versiontag \
 
 ## Tests
 
-Tests should help you to understand how versiontag works and to modify the code without breaking functionality. More tests are coming soon.
+Tests should help you to understand how **versiontag** works and to modify the code without breaking functionality. More tests are coming soon.
 
 Run the tests with the following command. 
 
@@ -56,7 +57,7 @@ bash testCases/testAll.sh
 
 ## Known limitations
 
-You should update your master before running `versiontag` in order to get the latests tags from the remote repo. 
+You should update your master before running `versiontag` in order to get the latest tags from the remote repo. 
 
 ## Contributors
 
@@ -79,7 +80,7 @@ Your name here ;-)
 ## Basic usage
 
 ```
-$ versiontag patch|minor|major 'Tag message'
+$ versiontag patch|minor|major [-m 'Tag message']
 ```
 
 The command will show current and updated version and will prompt you to create the tag in the local version.
