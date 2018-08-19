@@ -51,7 +51,9 @@ function updateSemverFile() {
     echo ":notes: $msg" >&3
     echo >&3
     exec 3>&-
-    
+}
+
+function pushSemver() {
     execute git add .semver
     execute git commit -m "Update .semver file"
     execute git push
@@ -116,6 +118,11 @@ function showSuccess() {
 # Show current version
 
 function showCurrentVersion() {
+    if [[ true == "$versionFile" ]]; then
+        updateSemverFile
+        printf '.semver file generated for: %s\n' "$last"
+        return
+    fi
     printf 'Current version: %s\n' "$last"
 }
 
@@ -211,31 +218,25 @@ esac
 
 # Shows information
 
-echo "Current version : $last"
-echo "New tag         : v$major.$minor.$patch"
-echo
-
-
+printf "Current version : %s\n" "$last"
+printf "New tag         : %s.%s.%s\n\n" "v$major" "$minor" "$patch"
 
 if [[ false == "$force" &&  "no" == $(confirm "Do you agree?") ]]; then
-    echo
-    echo "No tag was created"
+    printf '\n%s' "No tag was created"
     exit 0;
 fi
 
 if [[ -z $msg ]]; then
     execute git tag "v$major.$minor.$patch"
 else
-    echo "Message         : $msg"
-    echo
+    printf 'Message         : %s\n\n' "$msg"
     execute git tag -a "v$major.$minor.$patch" -m "$msg ($action version)"
 fi
 
 updateSemverFile
 
 if [[ false == "$force" &&  "no" == $(confirm "Do you want to push this tag right now?") ]]; then
-    echo
-    echo "No tag was pushed"
+    printf '\n%s' "No tag was pushed"
     exit 0;
 fi
 
