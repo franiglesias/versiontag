@@ -2,7 +2,7 @@
 
 Bash command to automate tagging with semantic versioning in a git repository.
 
-Current version: v2.0.0
+Current version: v2.1.0
 
 ## Features
 
@@ -96,6 +96,13 @@ Show current version
 ```bash
 $ versiontag current
 ```
+
+Generate .semver for current version
+
+```bash
+$ versiontag current --semver
+```
+
 
 Patch version
 
