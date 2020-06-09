@@ -38,7 +38,7 @@ function updateSemverFile() {
     if [[ true == "$dry" || false == "$versionFile" ]]; then
         return 0
     fi
-    
+
     :> .semver
     exec 3<> .semver
 
@@ -47,7 +47,7 @@ function updateSemverFile() {
     echo ":minor: $minor" >&3
     echo ":patch: $patch" >&3
     echo >&3
-    
+
     echo ":notes: $msg" >&3
     echo >&3
     exec 3>&-
@@ -129,7 +129,7 @@ function showCurrentVersion() {
 # Get the last tag and breaks into parts
 
 function getLastTag() {
-    lasttag=`git tag | sort -r | grep "^v[0-9]*\.[0-9]*\.[0-9]" | head -1 2> /dev/null` || true
+    lasttag=`git tag | sort -rV | grep "^v[0-9]*\.[0-9]*\.[0-9]" | head -1 2> /dev/null` || true
 
     if [[ -z "$lasttag" ]]; then
         lasttag='v0.0.0'
