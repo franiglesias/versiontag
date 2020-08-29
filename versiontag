@@ -79,8 +79,6 @@ Automates version tag creation.
 Commands:   patch|minor|major 'Tag message'
             remove
             current
-            last
-            short
 
 Options:    -d|--dry:     don't change things
             -f|--force:   don't ask for confirmation
@@ -92,8 +90,6 @@ Examples:
 ---------
 
 Show current version:  versiontag current
-Show last version:     versiontag last 
-Show short version:    versiontag short version (for iOS and Android)
 Patch version:         versiontag patch 'Fix broken view'
 Minor version:         versiontag minor --message'Add Customer filter by email'
 Major version:         versiontag major -m 'Blog module'
@@ -119,8 +115,6 @@ function showSuccess() {
     echo
 }
 
-function strip-v () { echo -n "${1#v}"; }
-
 # Show current version
 
 function showCurrentVersion() {
@@ -129,31 +123,7 @@ function showCurrentVersion() {
         printf '.semver file generated for: %s\n' "$last"
         return
     fi
-    current=$(git describe --tags --match 'v[0-9]*' --always --dirty)
-    printf "$current"
-}
-
-# Show last version
-
-function showLastVersion() {
-    if [[ true == "$versionFile" ]]; then
-        updateSemverFile
-        printf '.semver file generated for: %s\n' "$last"
-        return
-    fi
-    printf "$last"
-}
-
-# Show short version
-
-function showShortVersion() {
-    if [[ true == "$versionFile" ]]; then
-        updateSemverFile
-        printf '.semver file generated for: %s\n' "$last"
-        return
-    fi
-    short=$(strip-v "$last")
-    printf "$short"
+    printf 'Current version: %s\n' "$last"
 }
 
 # Get the last tag and breaks into parts
@@ -207,13 +177,6 @@ for ((i = 1; i <= $#; i++ )); do
         "current")
             action='current'
             ;;
-        "last")
-            action='last'
-            ;;
-        "short")
-            showShortVersion
-            exit 0
-            ;;
         "remove")
             if [[ "yes" == $(confirm "Do you want to remove $last?") ]]; then
                 removeTag
@@ -234,9 +197,6 @@ done
 case "$action" in
     'current')
         showCurrentVersion
-        exit 0;;
-    'last')
-        showLastVersion
         exit 0;;
     'patch')
         patch=$((patch + 1))
