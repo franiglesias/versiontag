@@ -146,6 +146,9 @@ function getLastTag() {
     last="v$major.$minor.$patch"
 }
 
+# Get last tag from repo and process the desired command
+
+getLastTag
 
 # Process command options
 
@@ -190,10 +193,6 @@ for ((i = 1; i <= $#; i++ )); do
             ;;
     esac
 done
-
-# Get last tag from repo and process the desired command
-
-getLastTag
 
 case "$action" in
     'current')
