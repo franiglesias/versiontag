@@ -2,7 +2,7 @@
 
 Bash command to automate tagging with semantic versioning in a git repository.
 
-Current version: v2.1.0
+Current version: v2.1.1
 
 ## Features
 
@@ -74,6 +74,10 @@ A big thank you to:
  [Javier Ferrer](https://github.com/JavierCane)
  
  * Suggested .semver file
+ 
+ [Asghar Ghorbani](https://github.com/a-ghorbani)
+ 
+ * Fixed problem with remove command
  
 Your name here ;-)
 
