@@ -79,6 +79,10 @@ A big thank you to:
  
  * Fixed problem with remove command
  
+ [Skarev](https://github.com/skarev)
+ 
+ * Improve tag sorting
+
 Your name here ;-)
 
 ## Basic usage
