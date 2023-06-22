@@ -1,0 +1,4 @@
+.circleci/            @ThirtyMadison/infra
+.github/              @ThirtyMadison/infra
+.infra/               @ThirtyMadison/infra
+atlantis.yaml         @ThirtyMadison/infra
