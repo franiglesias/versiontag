@@ -1,3 +1,5 @@
+*                   @ThirtyMadison/dx
+
 .circleci/            @ThirtyMadison/infra
 .github/              @ThirtyMadison/infra
 .infra/               @ThirtyMadison/infra
