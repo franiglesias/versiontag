@@ -2,7 +2,7 @@
 
 Bash command to automate tagging with semantic versioning in a git repository.
 
-Current version: v2.1.1
+Current version: v2.1.3
 
 ## Features
 
