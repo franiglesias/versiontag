@@ -129,7 +129,7 @@ function showCurrentVersion() {
 # Get the last tag and breaks into parts
 
 function getLastTag() {
-    lasttag=`git tag -l --sort=-committerdate | head -1 2> /dev/null` || true
+    lasttag=`git tag -l --sort=-version:refname | head -1 2> /dev/null` || true
 
     if [[ -z "$lasttag" ]]; then
         lasttag='v0.0.0'
